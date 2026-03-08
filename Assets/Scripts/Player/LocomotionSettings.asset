@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab2ca641e17f4734696a07b462660a7d, type: 3}
+  m_Name: LocomotionSettings
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLocomotion
+  _rotationSpeed: 0
+  _maxSpeed: 0
+  _groundDistance: 0.15
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  JumpHeight: 2
+  JumpApexTime: 0.5
+  JumpGravityMultiplier: 0.5
+  CoyoteTime: 0.15
+  JumpBufferTime: 0.1
+  Acceleration: 10
+  GroundFriction: 5
+  AirAcceleration: 3
+  AirDrag: 0.5
+  MaxAirSpeed: 10
