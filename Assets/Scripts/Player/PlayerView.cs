@@ -31,20 +31,11 @@ public class PlayerView : MonoBehaviour
         }
     }
 
-
     public void UpdateThrowingAnimation(PlayerBrain brain)
     {
-
-        if (brain.Actions.Throw.IsPressed())
+        if (brain.Actions.Throw.WasPressedThisFrame() && brain.Actions.Aim.IsPressed())
         {
-            Animator.SetBool("IsThrowing", true);
-            Animator.SetLayerWeight(1, 1);
-        }
-
-        if (brain.Actions.Throw.WasPerformedThisFrame())
-        {
-            Animator.SetBool("IsThrowing", false);
-            Animator.SetLayerWeight(1, 0);
+            Animator.SetTrigger("Throw");
         }
     }
 
@@ -53,10 +44,12 @@ public class PlayerView : MonoBehaviour
         Animator.SetBool("IsAiming", brain.Actions.Aim.IsPressed());
         if(brain.Actions.Aim.IsPressed())
         {
+            //lerp
             Animator.SetLayerWeight(1, 1);
         }
         else if(brain.Actions.Aim.WasReleasedThisFrame())
         {
+            //lerp
             Animator.SetLayerWeight(1, 0);
         }
     }

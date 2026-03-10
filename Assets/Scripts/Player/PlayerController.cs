@@ -15,25 +15,15 @@ public class PlayerController : MonoBehaviour
 
     public static event Action<Vector3> OnPlayerMoved;
 
-    //Starting from here we will refactor in the next iteration
-    [SerializeField] private bool _isGamepad;
-
     private Vector3 _moveInput = Vector3.zero;
     private bool _isGrounded;
     [SerializeField] private Transform _groundCheck;
     [SerializeField] private Transform _camera;
 
     private Quaternion _targetRotation;
-    private bool _hasTargetRotation;
     private Vector3 _movementDirection;
-
-    [Range(0, 50f)]
-    [SerializeField] private float _gravity;
-    
-    private bool _isJumping;
-    private float _jumpTimer = 0;
-    [Range(0,5f)]
-    [SerializeField] private float _maxJumpTime;
+    private float _gravity = 9.81f;
+    private float _ySpeed; 
 
     private CharacterController _controller;
 
@@ -43,8 +33,6 @@ public class PlayerController : MonoBehaviour
         _view = GetComponent<PlayerView>();
         _controller = GetComponent<CharacterController>();
     }
-
-    
 
     private void Update()
     {
@@ -56,22 +44,18 @@ public class PlayerController : MonoBehaviour
         _moveInput.z = Brain.Actions.Move.ReadValue<Vector2>().y;
         _moveInput.Normalize();
 
+        if(_isGrounded)
+        {
+            _ySpeed = 0;
+        }
+        else
+        {
+            _ySpeed -= _gravity * Time.deltaTime;
+        }
+
+
         Move();
 
-        if(_isJumping)
-        {
-            _jumpTimer += Time.deltaTime;
-        }
-
-        if(_jumpTimer > _maxJumpTime)
-        {
-            _isJumping = false;
-            _jumpTimer = 0;
-        }
-
-
-        SetJumpRequest();
-        View.UpdateSlidingAnimation(Brain);
         View.UpdateAimingAnimation(Brain);
         View.UpdateThrowingAnimation(Brain);
 
@@ -86,6 +70,7 @@ public class PlayerController : MonoBehaviour
         _movementDirection = Quaternion.AngleAxis(_camera.rotation.eulerAngles.y, Vector3.up) * _movementDirection;
         _movementDirection.Normalize();
 
+
         View.UpdateWalkingAnimationMagnitude(inputMagnitude);
 
         if (_movementDirection != Vector3.zero)
@@ -98,31 +83,15 @@ public class PlayerController : MonoBehaviour
         else
         {
             View.UpdateWalkingAnimation(false); 
-            _hasTargetRotation = false;
         }
     }
 
     private void OnAnimatorMove()
     {
         Vector3 velocity = View.Animator.deltaPosition / Time.deltaTime;
+        velocity.y = _ySpeed;
+
         _controller.Move(velocity * Time.deltaTime);
-    }
-
-    private void SetJumpRequest()
-    {
-        if (Brain.Actions.Jump.WasPressedThisFrame() && _isGrounded)
-        {
-            _isJumping = true;
-        }
-    }
-
-    private float GetGravity()
-    {
-        return _movementDirection.y -= _gravity * Time.fixedDeltaTime;
-    }
-    public void OnDeviceChanged(PlayerInput playerInput)
-    {
-        _isGamepad = playerInput.currentControlScheme.Equals("Gamepad") ? true : false;
     }
 
     public void DisablePlayerControls()
